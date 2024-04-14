@@ -1,28 +1,12 @@
 import { useState } from "react";
 import "../style/Navbar.css";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import { useLogout } from "../hooks/useLogout";
 import { useAuthContext } from "../hooks/useAuthContext";
-
-const MobileMenu = () => {
-  return (
-    <div className={"mobile-menu"}>
-      <a href="#Home">Home</a>
-      <a href="#Membership">Membership</a>
-      <a href="#PersonalTraining">Personal Training</a>
-      <a href="#Classes">Classes</a>
-      <a href="#contact">Contact</a>
-      <a href="#about">About</a>
-      <a href="#privacy">Privacy Policy</a>
-    </div>
-  );
-};
+import Logo from "../Asset/logo.png";
 
 const Navbar = () => {
-  const [isShown, setIsShown] = useState(false);
-  const toggleMobileMenu = () => {
-    setIsShown(!isShown);
-  };
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const { logout } = useLogout();
   const { user } = useAuthContext();
@@ -32,49 +16,58 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="topnav">
-        {/* Your Logo/Brand here */}
-        <div className="logo">
-          A<span>WORKOUT</span>
+      <nav>
+        <Link to="/" className="title">
+          <img
+            src={Logo}
+            alt="logo"
+            className="img-logo"
+            style={{ width: "100px" }}
+          />
+        </Link>
+        <div className="menu" onClick={() => setMenuOpen(!menuOpen)}>
+          <span></span>
+          <span></span>
+          <span></span>
         </div>
-
-        <div className="menu">
-          <a href="/" className="active-link">
-            Home
-          </a>
-          <a href="/">Membership</a>
-          <a href="/">Personal Training</a>
-          <a href="/">Classes</a>
-          <a href="/">Contact</a>
-          <a href="/">About</a>
+        {user ? (
+          <div>
+            <ul className={menuOpen ? "open" : ""}>
+              <li>
+                <NavLink to="/membership">Membership</NavLink>
+              </li>
+              <li>
+                <NavLink to="/personaltraining">Personal Training</NavLink>
+              </li>
+              <li>
+                <NavLink to="/classes">Classes</NavLink>
+              </li>
+              <li>
+                <NavLink to="/contact">Contact</NavLink>
+              </li>
+              <span style={{ textAlign: "center", margin: "8px" }}>
+                {user.email}
+              </span>
+              <li>
+                <button className="buttonNavbar" onClick={handleClick}>
+                  Logout
+                </button>
+              </li>
+            </ul>
+          </div>
+        ) : (
+          <div>
+          <ul className={menuOpen ? "open" : ""}>
+          <li>
+              <NavLink to="/login">Login</NavLink>
+            </li>
+            <li>
+              <NavLink to="/signup">Signup</NavLink>
+            </li>
+          </ul>
         </div>
-
-        <nav>
-          {user ? (
-            <div>
-              <span>{user.email}</span>
-              <button onClick={handleClick}>Logout</button>
-            </div>
-          ) : (
-            <div>
-              <Link to="/login">Login</Link>
-              <Link to="/signup">Signup</Link>
-            </div>
-          )}
-        </nav>
-        {/* This button only shows up on small screens. It is used to open the mobile menu */}
-        <button className="show-mobile-menu-button" onClick={toggleMobileMenu}>
-          &#8801;
-        </button>
-      </div>
-
-      {/* The mobile menu and the close button */}
-      {isShown && <MobileMenu />}
-      {isShown && (
-        <button className="close-mobile-menu-button" onClick={toggleMobileMenu}>
-          &times;
-        </button>
-      )}
+        )}
+      </nav>
     </>
   );
 };
